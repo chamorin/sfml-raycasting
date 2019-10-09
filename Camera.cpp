@@ -1,6 +1,6 @@
 #include "./Camera.h"
 
-Camera::Camera(sf::RenderWindow &renderWindow) : m_renderWindow(renderWindow)
+Camera::Camera(sf::RenderWindow &renderWindow, Level &level) : m_renderWindow(renderWindow), m_level(level)
 {
     m_radius = 5;
     m_camera.setRadius(m_radius);
@@ -49,8 +49,16 @@ void Camera::projection()
     for (unsigned int i = 0; i < m_vecRays.size(); ++i)
     {
         m_vecRays[i][0].position = m_position;
-        m_vecRays[i][1].position = {m_position.x + m_rayLength * dCos((m_angle + m_fov / 2) - i * (m_fov / WIDTH_SCREEN)),
-                                    m_position.y + m_rayLength * dSin((m_angle + m_fov / 2) - i * (m_fov / WIDTH_SCREEN))};
+
+        if (intersect(i))
+        {
+            m_vecRays[i][1].position = m_intesection;
+        }
+        else
+        {
+            m_vecRays[i][1].position = {m_position.x + m_rayLength * dCos((m_angle + m_fov / 2) - i * (m_fov / WIDTH_SCREEN)),
+                                        m_position.y + m_rayLength * dSin((m_angle + m_fov / 2) - i * (m_fov / WIDTH_SCREEN))};
+        }
     }
 }
 
@@ -85,6 +93,26 @@ void Camera::checkKeyboardEvent(sf::Time dt)
 
     m_camera.setPosition(m_position);
     m_camera.setRotation(m_angle);
+}
+
+bool Camera::intersect(unsigned int it)
+{
+    float fAngle = (m_angle + m_fov / 2 - it * (m_fov / WIDTH_SCREEN));
+    sf::Vector2f direction = {dCos(fAngle), dSin(fAngle)};
+
+    for (unsigned int i = 0; i < m_rayLength; ++i)
+    {
+        int dx = (int)(m_position.x + i * direction.x);
+        int dy = (int)(m_position.y + i * direction.y);
+
+        if (m_level.checkLevelCase(dx / blockSize, dy / blockSize))
+        {
+            m_intesection.x = dx;
+            m_intesection.y = dy;
+            return true;
+        }
+    }
+    return false;
 }
 
 Camera::~Camera()
