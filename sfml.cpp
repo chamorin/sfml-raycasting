@@ -1,13 +1,14 @@
 #include <SFML/Graphics.hpp>
-#include "./Constant.h"
+#include "Constant.h"
+#include "Camera.h"
 
 using namespace std;
 
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(WIDTH_SCREEN, HEIGHT_SCREEN), "WORKING");
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+
+	Camera camera(window);
 
 	while (window.isOpen())
 	{
@@ -18,10 +19,10 @@ int main()
 				window.close();
 		}
 
+		camera.update();
 		window.clear();
 
-		window.draw(shape);
-
+		camera.draw();
 		window.display();
 	}
 

@@ -22,6 +22,7 @@ public:
     void draw();
     void update();
     void projection();
+    void checkKeyboardEvent(sf::Time dt);
     inline float toRadian(float degree) { return (PI/180)*degree; }
     inline float dCos(float degree) { return cos(toRadian(degree)); }
     inline float dSin(float degree) { return sin(toRadian(degree)); }
